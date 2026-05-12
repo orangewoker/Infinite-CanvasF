@@ -1462,15 +1462,19 @@
         function defaultPoint(dx=0, dy=0){ return screenToWorld(window.innerWidth / 2 + dx, window.innerHeight / 2 + dy); }
         function addImageNode(point){
             const p = point || defaultPoint(-120, 0);
-            addNode({id:uid('img'), type:'image', x:p.x, y:p.y, url:'', name:'空白图片'});
+            const node = {id:uid('img'), type:'image', x:p.x, y:p.y, url:'', name:'空白图片'};
+            addNode(node);
+            return node;
         }
         function addPromptNode(point){
             const p = point || defaultPoint(0, 0);
-            addNode({id:uid('prompt'), type:'prompt', x:p.x, y:p.y, text:''});
+            const node = {id:uid('prompt'), type:'prompt', x:p.x, y:p.y, text:''};
+            addNode(node);
+            return node;
         }
         function addLLMNode(point){
             const p = point || defaultPoint(80, 0);
-            addNode({
+            const node = {
                 id:uid('llm'),
                 type:'llm',
                 x:p.x,
@@ -1484,16 +1488,20 @@
                 llmInputHeight:110,
                 llmOutputHeight:150,
                 running:false
-            });
+            };
+            addNode(node);
+            return node;
         }
         function addGeneratorNode(point){
             const p = point || defaultPoint(120, 0);
             const providerId = imageApiProviders()[0]?.id || 'comfly';
-            addNode({id:uid('gen'), type:'generator', x:p.x, y:p.y, apiProvider:providerId, model:allImageModels(providerId)[0] || models.gpt, ratio:'square', resolution:'1k', customRatio:'', customSize:'', customRatioWidth:'', customRatioHeight:'', customWidth:'', customHeight:'', inputs:[]});
+            const node = {id:uid('gen'), type:'generator', x:p.x, y:p.y, apiProvider:providerId, model:allImageModels(providerId)[0] || models.gpt, ratio:'square', resolution:'1k', customRatio:'', customSize:'', customRatioWidth:'', customRatioHeight:'', customWidth:'', customHeight:'', inputs:[]};
+            addNode(node);
+            return node;
         }
         function addMsGenNode(point){
             const p = point || defaultPoint(140, 0);
-            addNode({
+            const node = {
                 id:uid('msgen'),
                 type:'msgen',
                 x:p.x,
@@ -1513,7 +1521,9 @@
                 fitImage:false,
                 inputs:[],
                 running:false
-            });
+            };
+            addNode(node);
+            return node;
         }
         async function getImageDimensions(url){
             return new Promise((resolve, reject) => {
@@ -1901,7 +1911,7 @@
         }
         function addComfyNode(point){
             const p = point || defaultPoint(160, 0);
-            addNode({
+            const node = {
                 id:uid('comfy'),
                 type:'comfy',
                 x:p.x,
@@ -1929,11 +1939,15 @@
                 comfyParams:{},
                 count:1,
                 inputs:[]
-            });
+            };
+            addNode(node);
+            return node;
         }
         function addOutputNode(point){
             const p = point || defaultPoint(260, 0);
-            addNode({id:uid('out'), type:'output', x:p.x, y:p.y, images:[]});
+            const node = {id:uid('out'), type:'output', x:p.x, y:p.y, images:[]};
+            addNode(node);
+            return node;
         }
         function openCreateMenu(clientX, clientY){
             menuPoint = screenToWorld(clientX, clientY);
@@ -1944,14 +1958,31 @@
         }
         function closeCreateMenu(){ createMenu.classList.remove('open'); }
         function menuAdd(type){
+            const fromId = pendingLinkFrom;
+            const originKind = pendingLinkKind;
+            pendingLinkFrom = null;
+            pendingLinkKind = null;
             closeCreateMenu();
-            if(type === 'image') addImageNode(menuPoint);
-            if(type === 'prompt') addPromptNode(menuPoint);
-            if(type === 'llm') addLLMNode(menuPoint);
-            if(type === 'generator') addGeneratorNode(menuPoint);
-            if(type === 'msgen') addMsGenNode(menuPoint);
-            if(type === 'comfy') addComfyNode(menuPoint);
-            if(type === 'output') addOutputNode(menuPoint);
+            let newNodeId = null;
+            if(type === 'image') { const node = addImageNode(menuPoint); newNodeId = node?.id; }
+            if(type === 'prompt') { const node = addPromptNode(menuPoint); newNodeId = node?.id; }
+            if(type === 'llm') { const node = addLLMNode(menuPoint); newNodeId = node?.id; }
+            if(type === 'generator') { const node = addGeneratorNode(menuPoint); newNodeId = node?.id; }
+            if(type === 'msgen') { const node = addMsGenNode(menuPoint); newNodeId = node?.id; }
+            if(type === 'comfy') { const node = addComfyNode(menuPoint); newNodeId = node?.id; }
+            if(type === 'output') { const node = addOutputNode(menuPoint); newNodeId = node?.id; }
+            if(fromId && newNodeId){
+                const connFromId = originKind === 'out' ? fromId : newNodeId;
+                const connToId = originKind === 'out' ? newNodeId : fromId;
+                if(canConnect(connFromId, connToId)){
+                    if(!connections.some(c => c.from === connFromId && c.to === connToId)){
+                        connections.push({id:uid('c'), from:connFromId, to:connToId});
+                        syncGeneratorInputs();
+                        render();
+                    }
+                }
+                scheduleSave();
+            }
         }
         async function uploadImages(files, point){
             if(!ensureCanvas()) return;
@@ -3826,6 +3857,17 @@
                         scheduleSave();
                         render();
                     }
+                } else {
+                    tempLink = null;
+                    window.onmousemove = null;
+                    window.onmouseup = null;
+                    renderLinks();
+                    const linkPoint = screenToWorld(e2.clientX, e2.clientY);
+                    openCreateMenu(e2.clientX, e2.clientY);
+                    menuPoint = linkPoint;
+                    pendingLinkFrom = originId;
+                    pendingLinkKind = originKind;
+                    render();
                 }
                 tempLink = null;
                 window.onmousemove = null;
@@ -3833,6 +3875,8 @@
                 renderLinks();
             };
         }
+        let pendingLinkFrom = null;
+        let pendingLinkKind = null;
         function nearestPort(clientX, clientY, kind){
             const selector = `.port.${kind}`;
             const direct = document.elementFromPoint(clientX, clientY)?.closest(selector);
@@ -4001,6 +4045,12 @@
         board.ondblclick = e => {
             if(!canvas) return;
             if(e.target !== board && e.target !== world && e.target !== nodesEl && e.target !== linksEl) return;
+            openCreateMenu(e.clientX, e.clientY);
+        };
+        board.oncontextmenu = e => {
+            if(!canvas) return;
+            if(e.target !== board && e.target !== world && e.target !== nodesEl && e.target !== linksEl) return;
+            e.preventDefault();
             openCreateMenu(e.clientX, e.clientY);
         };
         board.onwheel = e => {
