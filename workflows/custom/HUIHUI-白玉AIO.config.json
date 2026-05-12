@@ -1,0 +1,107 @@
+{
+  "title": "custom/HUIHUI-白玉AIO",
+  "fields": [
+    {
+      "id": "f_l4hxark",
+      "node": "11",
+      "input": "width",
+      "name": "宽度",
+      "type": "number",
+      "default": 960,
+      "min": 0.0,
+      "max": 1920.0,
+      "step": 1.0,
+      "options": []
+    },
+    {
+      "id": "f_y0ldqih",
+      "node": "11",
+      "input": "height",
+      "name": "高度",
+      "type": "number",
+      "default": 1280,
+      "min": 0.0,
+      "max": 2560.0,
+      "step": 1.0,
+      "options": []
+    },
+    {
+      "id": "f_2tv721l",
+      "node": "30",
+      "input": "text",
+      "name": "提示词文本",
+      "type": "textarea",
+      "default": "一位年轻女性坐在一片茂密的绿色高草中，阳光从上方照射下来。她有着黑色的齐肩短发和刘海，面部表情柔和，双眼直视镜头。她的上半身微微前倾，躯干自然放松。她身穿一件浅绿色的无袖连衣裙，裙子正面有一个深V领口，并配有系带设计，裙摆带有白色拼接，自然垂落在大腿上。她的双腿在膝盖处弯曲，双脚踩在草丛中，双腿之间留有明显的空隙，呈现出一种放松的坐姿。她的双手随意地放在身体两侧，被前景的高大草叶部分遮挡。光线在她的皮肤和衣物上形成了柔和的阴影，突显了身体的曲线和织物的褶皱。背景是充满生机的绿色草地和明亮的蓝天，构图采用低角度视角，使得人物在画面中显得突出且富有层次感。超精细细节，最佳质量，杰作，8k，清晰对焦，真实光影",
+      "min": null,
+      "max": null,
+      "step": null,
+      "options": []
+    },
+    {
+      "id": "f_swdqdif",
+      "node": "159",
+      "input": "lora_name",
+      "name": "LoRA 模型",
+      "type": "text",
+      "default": "00a测试\\ZIT-滑块-事业线cleavage_loraholic.safetensors",
+      "min": null,
+      "max": null,
+      "step": null,
+      "options": []
+    },
+    {
+      "id": "f_xrmyh88",
+      "node": "159",
+      "input": "strength_model",
+      "name": "模型强度",
+      "type": "slider",
+      "default": 1,
+      "min": 0.0,
+      "max": 10.0,
+      "step": 0.1,
+      "options": []
+    },
+    {
+      "id": "f_12nkdn3",
+      "node": "160",
+      "input": "lora_name",
+      "name": "LoRA 模型",
+      "type": "text",
+      "default": "00a测试\\Z-Breast-Slider.safetensors",
+      "min": null,
+      "max": null,
+      "step": null,
+      "options": []
+    },
+    {
+      "id": "f_tq48ez3",
+      "node": "160",
+      "input": "strength_model",
+      "name": "模型强度",
+      "type": "slider",
+      "default": 1,
+      "min": 0.0,
+      "max": 10.0,
+      "step": 0.1,
+      "options": []
+    }
+  ],
+  "mini_cards": {
+    "prompt": {
+      "x": 24,
+      "y": 30
+    },
+    "image": {
+      "x": 24,
+      "y": 210
+    },
+    "custom": {
+      "x": 280,
+      "y": 78
+    },
+    "output": {
+      "x": 540,
+      "y": 120
+    }
+  }
+}

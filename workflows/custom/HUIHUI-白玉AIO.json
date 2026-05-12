@@ -1,0 +1,165 @@
+{
+  "11": {
+    "inputs": {
+      "width": 960,
+      "height": 1280,
+      "batch_size": 1
+    },
+    "class_type": "EmptySD3LatentImage",
+    "_meta": {
+      "title": "空Latent_SD3"
+    }
+  },
+  "18": {
+    "inputs": {
+      "samples": [
+        "81",
+        0
+      ],
+      "vae": [
+        "42",
+        2
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE解码"
+    }
+  },
+  "30": {
+    "inputs": {
+      "text": "一位年轻女性坐在一片茂密的绿色高草中，阳光从上方照射下来。她有着黑色的齐肩短发和刘海，面部表情柔和，双眼直视镜头。她的上半身微微前倾，躯干自然放松。她身穿一件浅绿色的无袖连衣裙，裙子正面有一个深V领口，并配有系带设计，裙摆带有白色拼接，自然垂落在大腿上。她的双腿在膝盖处弯曲，双脚踩在草丛中，双腿之间留有明显的空隙，呈现出一种放松的坐姿。她的双手随意地放在身体两侧，被前景的高大草叶部分遮挡。光线在她的皮肤和衣物上形成了柔和的阴影，突显了身体的曲线和织物的褶皱。背景是充满生机的绿色草地和明亮的蓝天，构图采用低角度视角，使得人物在画面中显得突出且富有层次感。超精细细节，最佳质量，杰作，8k，清晰对焦，真实光影",
+      "clip": [
+        "42",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP文本编码器"
+    }
+  },
+  "35": {
+    "inputs": {
+      "filename_prefix": "ComfyUI",
+      "images": [
+        "18",
+        0
+      ]
+    },
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "保存图像"
+    }
+  },
+  "42": {
+    "inputs": {
+      "ckpt_name": "AllInOne\\Z-Image-Base-8steps-豹豹喵呜の白玉White_Marble-AIO_v1.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": {
+      "title": "Checkpoint大模型加载器(简易)"
+    }
+  },
+  "69": {
+    "inputs": {
+      "seed": 421359051815158,
+      "steps": 8,
+      "cfg": 1,
+      "sampler_name": "res_2s",
+      "scheduler": "bong_tangent",
+      "denoise": 1,
+      "model": [
+        "160",
+        0
+      ],
+      "positive": [
+        "30",
+        0
+      ],
+      "negative": [
+        "79",
+        0
+      ],
+      "latent_image": [
+        "11",
+        0
+      ]
+    },
+    "class_type": "KSampler",
+    "_meta": {
+      "title": "K采样器"
+    }
+  },
+  "74": {
+    "inputs": {
+      "clean_file_cache": true,
+      "clean_processes": true,
+      "clean_dlls": true,
+      "retry_times": 2,
+      "anything": [
+        "69",
+        0
+      ]
+    },
+    "class_type": "RAMCleanup",
+    "_meta": {
+      "title": "释放内存"
+    }
+  },
+  "79": {
+    "inputs": {
+      "text": "色调艳丽，过曝，静态，细节模糊不清，字幕，风格，作品，画作，画面，静止，整体发灰，最差质量，低质量，JPEG压缩残留，丑陋的，残缺的，多余的手指，画得不好的手部，画得不好的脸部，畸形的，毁容的，形态畸形的肢体，手指融合，静止不动的画面，杂乱的背景，三条腿，背景人很多，倒着走",
+      "clip": [
+        "42",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP文本编码器"
+    }
+  },
+  "81": {
+    "inputs": {
+      "offload_model": true,
+      "offload_cache": true,
+      "anything": [
+        "74",
+        0
+      ]
+    },
+    "class_type": "VRAMCleanup",
+    "_meta": {
+      "title": "释放显存"
+    }
+  },
+  "159": {
+    "inputs": {
+      "lora_name": "00a测试\\ZIT-滑块-事业线cleavage_loraholic.safetensors",
+      "strength_model": 1,
+      "model": [
+        "42",
+        0
+      ]
+    },
+    "class_type": "LoraLoaderModelOnly",
+    "_meta": {
+      "title": "LoRA加载器(仅模型)"
+    }
+  },
+  "160": {
+    "inputs": {
+      "lora_name": "00a测试\\Z-Breast-Slider.safetensors",
+      "strength_model": 1,
+      "model": [
+        "159",
+        0
+      ]
+    },
+    "class_type": "LoraLoaderModelOnly",
+    "_meta": {
+      "title": "LoRA加载器(仅模型)"
+    }
+  }
+}
